@@ -1,0 +1,15 @@
+{
+  "action": "store",
+  "project": "default",
+  "requestId": "req_store_001",
+  "client": {
+    "name": "munin-sdk-ts",
+    "version": "0.1.0"
+  },
+  "payload": {
+    "key": "project_notes",
+    "content": "Munin ecosystem kickoff complete",
+    "tags": ["planning", "ecosystem"],
+    "title": "Kickoff notes"
+  }
+}

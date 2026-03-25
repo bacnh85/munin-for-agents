@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://munin.dev/schemas/capabilities.schema.json",
+  "title": "MuninCapabilities",
+  "type": "object",
+  "required": ["specVersion", "actions", "features", "metadata"],
+  "properties": {
+    "specVersion": {
+      "type": "string",
+      "pattern": "^v\\d+\\.\\d+\\.\\d+$"
+    },
+    "actions": {
+      "type": "object",
+      "required": ["core", "optional"],
+      "properties": {
+        "core": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "optional": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "features": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["supported"],
+        "properties": {
+          "supported": { "type": "boolean" },
+          "reason": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["serverVersion", "timestamp"],
+      "properties": {
+        "serverVersion": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

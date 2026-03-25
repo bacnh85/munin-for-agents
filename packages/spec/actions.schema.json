@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://munin.dev/schemas/actions.schema.json",
+  "title": "MuninActionEnvelope",
+  "type": "object",
+  "required": ["action", "project", "payload"],
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "store",
+        "retrieve",
+        "search",
+        "list",
+        "recent",
+        "share",
+        "versions",
+        "rollback",
+        "encrypt",
+        "decrypt"
+      ]
+    },
+    "project": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payload": {
+      "type": "object"
+    },
+    "requestId": {
+      "type": "string"
+    },
+    "client": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

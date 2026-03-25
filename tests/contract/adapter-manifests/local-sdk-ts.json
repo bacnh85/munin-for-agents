@@ -1,0 +1,7 @@
+{
+  "name": "local-sdk-ts",
+  "type": "sdk",
+  "baseUrl": "http://localhost:4000",
+  "project": "default",
+  "requiredActions": ["store", "retrieve", "search", "list", "recent"]
+}

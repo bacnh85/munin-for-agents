@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "data": {
+    "results": [
+      {
+        "key": "project_notes",
+        "title": "Kickoff notes",
+        "score": 0.92,
+        "tags": ["planning", "ecosystem"],
+        "updatedAt": "2026-03-25T12:00:00.000Z"
+      }
+    ],
+    "count": 1
+  },
+  "requestId": "req_search_001"
+}

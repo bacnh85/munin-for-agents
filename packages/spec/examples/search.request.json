@@ -1,0 +1,11 @@
+{
+  "action": "search",
+  "project": "default",
+  "requestId": "req_search_001",
+  "payload": {
+    "query": "ecosystem",
+    "tags": ["planning"],
+    "tagMode": "and",
+    "limit": 10
+  }
+}

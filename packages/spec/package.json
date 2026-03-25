@@ -1,0 +1,11 @@
+{
+  "name": "@munin/spec",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Munin protocol specification and schemas",
+  "scripts": {
+    "build": "echo 'spec build: no-op'",
+    "lint": "echo 'spec lint: no-op'",
+    "test": "echo 'spec test: no-op'"
+  }
+}

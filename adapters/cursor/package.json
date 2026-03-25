@@ -1,0 +1,20 @@
+{
+  "name": "@munin/adapter-cursor",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "munin-cursor": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "test": "echo 'adapter-cursor tests: pending'"
+  },
+  "dependencies": {
+    "@munin/adapter-runtime": "workspace:*",
+    "@munin/sdk-ts": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}
