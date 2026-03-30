@@ -33,7 +33,7 @@ export async function startMcpServer() {
       tools: [
         {
           name: "munin_store_memory",
-          description: "Store or update a memory in Munin Context Core. It will automatically use the active project from environment if projectId is omitted.",
+          description: "Store or update a memory in Munin Context Core. It will automatically use the active project from environment if projectId is omitted. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
           inputSchema: {
             type: "object",
             properties: {
@@ -52,7 +52,7 @@ export async function startMcpServer() {
         },
         {
           name: "munin_retrieve_memory",
-          description: "Retrieve a memory by its unique key from the current Munin Context Core.",
+          description: "Retrieve a memory by its unique key from the current Munin Context Core. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
           inputSchema: {
             type: "object",
             properties: {
@@ -64,7 +64,7 @@ export async function startMcpServer() {
         },
         {
           name: "munin_search_memories",
-          description: "Search for memories using semantic search or keywords. Returns formatted, token-efficient GraphRAG context.",
+          description: "Search for memories using semantic search or keywords. Returns formatted, token-efficient GraphRAG context. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
           inputSchema: {
             type: "object",
             properties: {
@@ -78,7 +78,7 @@ export async function startMcpServer() {
         },
         {
           name: "munin_list_memories",
-          description: "List all memories with pagination.",
+          description: "List all memories with pagination. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
           inputSchema: {
             type: "object",
             properties: {
@@ -91,7 +91,7 @@ export async function startMcpServer() {
         },
         {
           name: "munin_recent_memories",
-          description: "Get the most recently updated memories.",
+          description: "Get the most recently updated memories. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
           inputSchema: {
             type: "object",
             properties: {
