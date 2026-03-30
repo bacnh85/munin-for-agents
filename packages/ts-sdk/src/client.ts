@@ -104,7 +104,60 @@ export class MuninClient {
       );
     }
 
-    return body;
+    return this.formatLlmResponse(body);
+  }
+
+  /**
+   * Cleans up raw Munin response for LLM context efficiency.
+   * Removes dense vector arrays and formats GraphRAG objects into readable structures.
+   */
+  private formatLlmResponse(rawRes: any): any {
+    if (!rawRes || !rawRes.data) return rawRes;
+
+    const data = rawRes.data;
+
+    // Clean single memory retrieve
+    if (data.key && data.content) {
+      if (data.embedding) delete data.embedding;
+      if (data.knowledge_graph) {
+        data.knowledge_graph = this.formatGraph(data.knowledge_graph);
+      }
+    }
+
+    // Clean search/list/recent results
+    if (Array.isArray(data.results)) {
+      data.results = data.results.map((mem: any) => {
+        if (mem.embedding) delete mem.embedding;
+        return mem;
+      });
+    }
+
+    // Clean graph in search
+    if (data.knowledge_graph) {
+      data.knowledge_graph = this.formatGraph(data.knowledge_graph);
+    }
+
+    return rawRes;
+  }
+
+  private formatGraph(kg: any): any {
+    if (!kg) return kg;
+    
+    const entities = (kg.entities || []).map((e: any) => {
+      if (e.embedding) delete e.embedding;
+      return `${e.name} (${e.type}): ${e.description}`;
+    });
+
+    const relationships = (kg.relationships || []).map((r: any) => {
+      if (r.embedding) delete r.embedding;
+      return `${r.source} -[${r.relation}]-> ${r.target}`;
+    });
+
+    return {
+      summary: "GraphRAG knowledge formatted for readability",
+      entities,
+      relationships
+    };
   }
 
   async store(projectId: string, payload: Record<string, unknown>) {
