@@ -33,11 +33,11 @@ export async function startMcpServer() {
       tools: [
         {
           name: "munin_store_memory",
-          description: "Store or update a memory in Munin. Requires a unique key and the content.",
+          description: "Store or update a memory in Munin Context Core. It will automatically use the active project from environment if projectId is omitted.",
           inputSchema: {
             type: "object",
             properties: {
-              projectId: { type: "string", description: "The Munin Project ID (get this from your workspace rules/instructions)" },
+              projectId: { type: "string", description: "Optional. Only use if cross-saving to a different Context Core ID." },
               key: { type: "string", description: "Unique identifier for this memory" },
               content: { type: "string", description: "The content to remember" },
               title: { type: "string", description: "Optional title" },
@@ -47,33 +47,33 @@ export async function startMcpServer() {
                 description: "List of tags, e.g. ['planning', 'frontend']"
               }
             },
-            required: ["projectId", "key", "content"],
+            required: ["key", "content"],
           },
         },
         {
           name: "munin_retrieve_memory",
-          description: "Retrieve a memory by its unique key.",
+          description: "Retrieve a memory by its unique key from the current Munin Context Core.",
           inputSchema: {
             type: "object",
             properties: {
-              projectId: { type: "string", description: "The Munin Project ID" },
+              projectId: { type: "string", description: "Optional. The Munin Context Core ID." },
               key: { type: "string", description: "Unique identifier" },
             },
-            required: ["projectId", "key"],
+            required: ["key"],
           },
         },
         {
           name: "munin_search_memories",
-          description: "Search for memories using semantic search or keywords.",
+          description: "Search for memories using semantic search or keywords. Returns formatted, token-efficient GraphRAG context.",
           inputSchema: {
             type: "object",
             properties: {
-              projectId: { type: "string", description: "The Munin Project ID" },
+              projectId: { type: "string", description: "Optional. The Munin Context Core ID." },
               query: { type: "string", description: "Search query" },
               tags: { type: "array", items: { type: "string" } },
               limit: { type: "number", description: "Max results (default: 10)" },
             },
-            required: ["projectId", "query"],
+            required: ["query"],
           },
         },
         {
@@ -82,11 +82,11 @@ export async function startMcpServer() {
           inputSchema: {
             type: "object",
             properties: {
-              projectId: { type: "string", description: "The Munin Project ID" },
+              projectId: { type: "string", description: "Optional. The Munin Context Core ID." },
               limit: { type: "number" },
               offset: { type: "number" },
             },
-            required: ["projectId"],
+            required: [],
           },
         },
         {
@@ -95,10 +95,10 @@ export async function startMcpServer() {
           inputSchema: {
             type: "object",
             properties: {
-              projectId: { type: "string", description: "The Munin Project ID" },
+              projectId: { type: "string", description: "Optional. The Munin Context Core ID." },
               limit: { type: "number" },
             },
-            required: ["projectId"],
+            required: [],
           },
         },
       ],
@@ -108,10 +108,10 @@ export async function startMcpServer() {
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     try {
       const args = request.params.arguments || {};
-      const projectId = args.projectId as string;
+      const projectId = (args.projectId as string) || process.env.MUNIN_PROJECT;
       
       if (!projectId) {
-        throw new Error("projectId is required");
+        throw new Error("projectId is required in arguments or MUNIN_PROJECT environment variable");
       }
 
       // Remove projectId from args before sending as payload
