@@ -4,6 +4,6 @@
   "description": "Kalera Munin - Long-Term Memory extension for Gemini CLI",
   "main": "dist/index.js",
   "permissions": {
-    "env": ["MUNIN_BASE_URL", "MUNIN_PROJECT", "MUNIN_API_KEY"]
+    "env": ["MUNIN_PROJECT", "MUNIN_API_KEY"]
   }
 }

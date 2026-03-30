@@ -1,7 +1,6 @@
 # Quickstart: Gemini CLI + Munin
 
 1. Configure env vars:
-   - `MUNIN_BASE_URL`
    - `MUNIN_API_KEY`
    - `MUNIN_PROJECT`
 2. Initialize `@kalera/munin-gemini`.

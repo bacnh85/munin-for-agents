@@ -3,7 +3,6 @@
 ## 1) Chuẩn bị env
 
 ```bash
-export MUNIN_BASE_URL="https://munin.kalera.dev" # Hoặc http://localhost:3237 nếu chạy local
 export MUNIN_PROJECT="id-context-core-cua-pa"
 export MUNIN_API_KEY="key-lay-tu-dashboard"
 export MUNIN_TIMEOUT_MS="15000"

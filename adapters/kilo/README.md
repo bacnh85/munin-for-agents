@@ -8,7 +8,6 @@ Scaffold adapter generated from generic MCP template.
 import { createKiloCodeMuninAdapter } from "@kalera/munin-kilo";
 
 const adapter = createKiloCodeMuninAdapter({
-  baseUrl: process.env.MUNIN_BASE_URL ?? "https://munin.kalera.dev",
   apiKey: process.env.MUNIN_API_KEY,
   project: process.env.MUNIN_PROJECT ?? "default-core",
 });

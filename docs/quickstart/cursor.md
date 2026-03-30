@@ -1,7 +1,6 @@
 # Quickstart: Cursor + Munin
 
 1. Set env vars:
-   - `MUNIN_BASE_URL`
    - `MUNIN_API_KEY`
    - `MUNIN_PROJECT`
 2. Install dependencies in `munin-ecosystem`.
