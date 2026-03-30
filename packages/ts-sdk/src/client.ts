@@ -131,6 +131,14 @@ export class MuninClient {
         return mem;
       });
     }
+    
+    // Server 'search' action returns 'memories' instead of 'results'
+    if (Array.isArray(data.memories)) {
+      data.memories = data.memories.map((mem: any) => {
+        if (mem.embedding) delete mem.embedding;
+        return mem;
+      });
+    }
 
     // Clean graph in search
     if (data.knowledge_graph) {
