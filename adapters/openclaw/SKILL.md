@@ -11,6 +11,13 @@ metadata:
 
 # 🐦 Munin: Reliable Memory for Your OpenClaw Agent
 
+<CRITICAL-INSTRUCTION>
+**HOW TO USE THIS SKILL**:
+The `munin_store_memory`, `munin_retrieve_memory`, and `munin_search_memories` actions are registered as native tools (MCP). 
+You MUST call them using your standard tool-calling interface (e.g. `callTool("munin_search_memories", {...})`). 
+**DO NOT under any circumstances try to run them as shell commands or bash scripts.**
+</CRITICAL-INSTRUCTION>
+
 Your agent forgets everything the moment you close the tab. You've seen the "pro" solutions—Mem0, Zep, LangMem—and you've seen their **$20/month** price tags. 
 
 We think that's insane. 
