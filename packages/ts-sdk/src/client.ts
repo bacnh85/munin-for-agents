@@ -104,72 +104,7 @@ export class MuninClient {
       );
     }
 
-    return this.formatLlmResponse(body);
-  }
-
-  /**
-   * Cleans up raw Munin response for LLM context efficiency.
-   * Removes dense vector arrays and formats GraphRAG objects into readable structures.
-   */
-  private formatLlmResponse(rawRes: any): any {
-    if (!rawRes || !rawRes.data) return rawRes;
-
-    const data = rawRes.data;
-
-    // Clean single memory retrieve
-    if (data.key && data.content) {
-      if (data.embedding) delete data.embedding;
-      if (data.knowledge_graph) {
-        data.knowledge_graph = this.formatGraph(data.knowledge_graph);
-      }
-    }
-
-    // Clean search/list/recent results
-    if (Array.isArray(data.results)) {
-      data.results = data.results.map((mem: any) => {
-        if (mem.embedding) delete mem.embedding;
-        return mem;
-      });
-    }
-    
-    // Server 'search' action returns 'memories' instead of 'results'
-    if (Array.isArray(data.memories)) {
-      data.memories = data.memories.map((mem: any) => {
-        if (mem.embedding) delete mem.embedding;
-        return mem;
-      });
-    }
-
-    // Clean graph in search
-    if (data.knowledge_graph) {
-      data.knowledge_graph = this.formatGraph(data.knowledge_graph);
-    }
-
-    return rawRes;
-  }
-
-  private formatGraph(kg: any): any {
-    if (!kg) return kg;
-    
-    const entities = (kg.entities || []).map((e: any) => {
-      if (e.embedding) delete e.embedding;
-      return `${e.label || 'Unknown'} (${e.type || 'Unknown'}): ${e.description || ''}`;
-    });
-
-    // To make relationships readable without doing a separate map lookup, 
-    // we use the sourceEntityId and targetEntityId directly or map if populated.
-    const relationships = (kg.relationships || []).map((r: any) => {
-      if (r.embedding) delete r.embedding;
-      const source = r.sourceLabel || r.sourceEntityId || 'Unknown';
-      const target = r.targetLabel || r.targetEntityId || 'Unknown';
-      return `${source} -[${r.type || 'Unknown'}]-> ${target}`;
-    });
-
-    return {
-      summary: "GraphRAG knowledge formatted for readability",
-      entities,
-      relationships
-    };
+    return body;
   }
 
   async store(projectId: string, payload: Record<string, unknown>) {
