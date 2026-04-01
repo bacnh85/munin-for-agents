@@ -1,0 +1,23 @@
+{
+  "name": "munin-claude-code",
+  "version": "1.0.0",
+  "description": "Long-term Memory integration for Claude Code. Qui — your memory turtle companion.",
+  "author": {
+    "name": "Kalera",
+    "email": "hoang.kal@gmail.com"
+  },
+  "repository": "https://github.com/3d-era/munin-for-agents",
+  "license": "MIT",
+  "keywords": [
+    "memory",
+    "long-term-memory",
+    "graphrag",
+    "knowledge-graph",
+    "context",
+    "context-management",
+    "productivity",
+    "developer-tools"
+  ],
+  "hooks": "./hooks/hooks.json",
+  "skills": "./skills"
+}

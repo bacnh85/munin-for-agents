@@ -1,0 +1,70 @@
+name: Plugin CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "plugins/munin-claude-code/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "plugins/munin-claude-code/**"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate plugin
+        run: |
+          PLUGIN_DIR="plugins/munin-claude-code"
+          echo "Validating plugin at $PLUGIN_DIR"
+
+          # Validate plugin.json
+          if [ ! -f "$PLUGIN_DIR/.claude-plugin/plugin.json" ]; then
+            echo "ERROR: plugin.json not found"
+            exit 1
+          fi
+          echo "✓ plugin.json found"
+
+          # Validate required fields
+          NAME=$(node -e "console.log(JSON.parse(require('fs').readFileSync('$PLUGIN_DIR/.claude-plugin/plugin.json','utf8')).name)")
+          if [ -z "$NAME" ]; then
+            echo "ERROR: plugin name is required"
+            exit 1
+          fi
+          echo "✓ plugin name: $NAME"
+
+          # Validate hooks.json
+          if [ -f "$PLUGIN_DIR/hooks/hooks.json" ]; then
+            node -e "JSON.parse(require('fs').readFileSync('$PLUGIN_DIR/hooks/hooks.json','utf8'))"
+            echo "✓ hooks/hooks.json is valid JSON"
+          fi
+
+          # Validate skills directories
+          if [ -d "$PLUGIN_DIR/skills" ]; then
+            SKILL_COUNT=$(find "$PLUGIN_DIR/skills" -name "SKILL.md" | wc -l)
+            echo "✓ Found $SKILL_COUNT skill(s)"
+          fi
+
+          # Validate agents
+          if [ -d "$PLUGIN_DIR/agents" ]; then
+            AGENT_COUNT=$(find "$PLUGIN_DIR/agents" -name "SKILL.md" | wc -l)
+            echo "✓ Found $AGENT_COUNT agent(s)"
+          fi
+
+          # Validate README
+          if [ -f "$PLUGIN_DIR/README.md" ]; then
+            README_SIZE=$(wc -c < "$PLUGIN_DIR/README.md")
+            if [ "$README_SIZE" -lt 500 ]; then
+              echo "WARNING: README seems too short (${README_SIZE} bytes)"
+            else
+              echo "✓ README.md exists (${README_SIZE} bytes)"
+            fi
+          fi
+
+          echo ""
+          echo "✅ Plugin validation passed"

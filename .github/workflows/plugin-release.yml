@@ -1,0 +1,63 @@
+name: Plugin Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag muốn release (ví dụ: v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+  push:
+    tags:
+      - "plugin-munin-claude-v*"
+      - "munin-plugin-v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Publish plugin package
+        run: |
+          PLUGIN_DIR="plugins/munin-claude-code"
+          PACKAGE_NAME="@kalera/munin-claude-plugin"
+
+          echo "Publishing $PACKAGE_NAME from $PLUGIN_DIR"
+
+          # Read version from plugin.json
+          VERSION=$(node -e "console.log(JSON.parse(require('fs').readFileSync('$PLUGIN_DIR/.claude-plugin/plugin.json','utf8')).version)")
+          echo "Plugin version: $VERSION"
+
+          # Create temp package.json for publishing
+          PKGJSON=$(cat <<EOF
+          {
+            "name": "$PACKAGE_NAME",
+            "version": "$VERSION",
+            "description": "$(node -e "process.stdout.write(JSON.parse(require('fs').readFileSync('$PLUGIN_DIR/.claude-plugin/plugin.json','utf8')).description)")",
+            "author": "$(node -e "const p=JSON.parse(require('fs').readFileSync('$PLUGIN_DIR/.claude-plugin/plugin.json','utf8')); process.stdout.write(p.author.name + ' <' + p.author.email + '>')")",
+            "license": "$(node -e "process.stdout.write(JSON.parse(require('fs').readFileSync('$PLUGIN_DIR/.claude-plugin/plugin.json','utf8')).license)")",
+            "repository": "$(node -e "process.stdout.write(JSON.parse(require('fs').readFileSync('$PLUGIN_DIR/.claude-plugin/plugin.json','utf8')).repository)")",
+            "homepage": "$(node -e "process.stdout.write(JSON.parse(require('fs').readFileSync('$PLUGIN_DIR/.claude-plugin/plugin.json','utf8')).homepage)")",
+            "keywords": $(node -e "console.log(JSON.stringify(JSON.parse(require('fs').readFileSync('$PLUGIN_DIR/.claude-plugin/plugin.json','utf8')).keywords))"),
+            "files": ["plugins/munin-claude-code"],
+            "main": "plugins/munin-claude-code/.claude-plugin/plugin.json",
+            "publishConfig": {
+              "directory": "$PLUGIN_DIR",
+              "linkDirectory": false
+            }
+          }
+          EOF
+          )
+
+          echo "$PKGJSON" > /tmp/package.json
+
+          npm config set //registry.npmjs.org/:_authToken "${{ secrets.NPM_TOKEN }}"
+          npm publish /tmp/package.json --access public --tag latest

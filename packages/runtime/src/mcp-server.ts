@@ -5,7 +5,7 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { MuninClient } from "@kalera/munin-sdk";
-import { loadCliEnv, safeError } from "./index.js";
+import { loadCliEnv, resolveProjectId, safeError } from "./index.js";
 
 export function createMcpServerInstance(env: ReturnType<typeof loadCliEnv>) {
   const client = new MuninClient({
@@ -62,27 +62,29 @@ export function createMcpServerInstance(env: ReturnType<typeof loadCliEnv>) {
         },
         {
           name: "munin_search_memories",
-          description: "Search for memories using semantic search or keywords. Returns formatted, token-efficient GraphRAG context. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
+          description: "Search for memories using semantic search or keywords. Returns formatted, token-efficient GraphRAG context. Supports pagination with topK/offset and optional total count. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
           inputSchema: {
             type: "object",
             properties: {
               projectId: { type: "string", description: "Optional. The Munin Context Core ID." },
               query: { type: "string", description: "Search query" },
               tags: { type: "array", items: { type: "string" } },
-              limit: { type: "number", description: "Max results (default: 10)" },
+              topK: { type: "number", description: "Max results to return (default: 10, max: 50)" },
+              offset: { type: "number", description: "Pagination offset for fetching more results (default: 0)" },
+              includeTotal: { type: "boolean", description: "If true, includes total count in response (default: false)" },
             },
             required: ["query"],
           },
         },
         {
           name: "munin_list_memories",
-          description: "List all memories with pagination. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
+          description: "List all memories with pagination support. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
           inputSchema: {
             type: "object",
             properties: {
               projectId: { type: "string", description: "Optional. The Munin Context Core ID." },
-              limit: { type: "number" },
-              offset: { type: "number" },
+              limit: { type: "number", description: "Max results to return (default: 10, max: 100)" },
+              offset: { type: "number", description: "Pagination offset (default: 0)" },
             },
             required: [],
           },
@@ -106,10 +108,13 @@ export function createMcpServerInstance(env: ReturnType<typeof loadCliEnv>) {
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     try {
       const args = request.params.arguments || {};
-      const projectId = (args.projectId as string) || process.env.MUNIN_PROJECT;
-      
+      // Priority: explicit arg > env var > CWD .env file
+      const projectId = (args.projectId as string) || resolveProjectId();
+
       if (!projectId) {
-        throw new Error("projectId is required in arguments or MUNIN_PROJECT environment variable");
+        throw new Error(
+          "projectId is required. Ensure MUNIN_PROJECT is set in .env or .env.local in your project directory, or passed as an argument."
+        );
       }
 
       // Remove projectId from args before sending as payload

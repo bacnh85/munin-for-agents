@@ -35,12 +35,56 @@ export function parseCliArgs(argv: string[], usage: string): ParsedCliArgs {
 
 export function loadCliEnv(): CliEnv {
   return {
-    baseUrl: "https://munin.kalera.dev",
+    baseUrl: process.env.MUNIN_BASE_URL || "https://munin.kalera.dev",
     apiKey: process.env.MUNIN_API_KEY,
     timeoutMs: Number(process.env.MUNIN_TIMEOUT_MS ?? 15000),
     retries: Number(process.env.MUNIN_RETRIES ?? 3),
     backoffMs: Number(process.env.MUNIN_BACKOFF_MS ?? 300),
   };
+}
+
+/**
+ * Resolve MUNIN_PROJECT from multiple sources, in priority order:
+ * 1. Explicit environment variable
+ * 2. .env.local in current working directory
+ * 3. .env in current working directory
+ */
+export function resolveProjectId(): string | undefined {
+  // 1. Explicit env var (highest priority)
+  if (process.env.MUNIN_PROJECT) {
+    return process.env.MUNIN_PROJECT;
+  }
+
+  // 2. .env.local in CWD
+  const envLocal = resolveEnvFile(".env.local");
+  if (envLocal) return envLocal;
+
+  // 3. .env in CWD
+  const envFile = resolveEnvFile(".env");
+  if (envFile) return envFile;
+
+  return undefined;
+}
+
+/**
+ * Read a .env file and extract MUNIN_PROJECT value.
+ * Returns undefined if file doesn't exist or value not found.
+ */
+function resolveEnvFile(filename: string): string | undefined {
+  try {
+    const path = `${process.cwd()}/${filename}`;
+    const fs = require("fs") as typeof import("fs");
+    if (!fs.existsSync(path)) return undefined;
+
+    const content = fs.readFileSync(path, "utf8");
+    const match = content.match(/^MUNIN_PROJECT\s*=\s*(.+)$/m);
+    if (match) {
+      return match[1].trim();
+    }
+  } catch {
+    // Ignore errors — file might be unreadable
+  }
+  return undefined;
 }
 
 export async function executeWithRetry<T>(
