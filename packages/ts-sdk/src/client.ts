@@ -65,7 +65,7 @@ export class MuninClient {
           requestId: options?.requestId,
           client: {
             name: "@kalera/munin-sdk",
-            version: "1.2.8",
+            version: "1.2.9",
           },
         }),
         signal: controller.signal,

@@ -1,5 +1,5 @@
 {
-  "name": "@kalera/munin-runtime",
+  "name": "@kalera/munin-shared-version",
   "version": "1.2.9",
   "type": "module",
   "main": "dist/index.js",
@@ -9,14 +9,10 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "lint": "tsc -p tsconfig.json --noEmit",
-    "test": "echo 'adapter-runtime tests: pending'"
+    "lint": "tsc -p tsconfig.json --noEmit"
   },
+  "dependencies": {},
   "devDependencies": {
     "typescript": "^5.9.2"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.27.1",
-    "@kalera/munin-sdk": "workspace:*"
   }
 }
