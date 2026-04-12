@@ -20894,7 +20894,7 @@ var MuninClient = class {
       requestId: options?.requestId,
       client: {
         name: "@kalera/munin-sdk",
-        version: "1.0.0"
+        version: "1.2.8"
       }
     };
     const controller = new AbortController();
