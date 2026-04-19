@@ -1,3 +1,7 @@
 packages:
   - packages/*
   - adapters/*
+
+# Workaround for pnpm 10.16.0 bug where boolean default for only-built-dependencies
+# is mis-parsed as iterable. Explicit empty array prevents the install crash.
+onlyBuiltDependencies: []
