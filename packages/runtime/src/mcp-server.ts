@@ -26,7 +26,7 @@ export function createMcpServerInstance(
   const server = new Server(
     {
       name: "munin-mcp-server",
-      version: "1.4.0",
+      version: "1.4.1",
     },
     {
       capabilities: {
@@ -191,7 +191,10 @@ export function createMcpServerInstance(
               key: { type: "string", description: "Memory key (provide this OR id, not both)" },
               id: { type: "string", description: "Memory ID (provide this OR key, not both)" },
             },
-            required: ["key"],
+            oneOf: [
+              { required: ["key"] },
+              { required: ["id"] },
+            ],
           },
         },
         {
@@ -205,7 +208,11 @@ export function createMcpServerInstance(
               id: { type: "string", description: "Memory ID (provide this OR key, not both)" },
               version: { type: "number", description: "The version number to rollback to (required)" },
             },
-            required: ["key", "version"],
+            required: ["version"],
+            oneOf: [
+              { required: ["key"] },
+              { required: ["id"] },
+            ],
           },
         },
         {
@@ -221,6 +228,22 @@ export function createMcpServerInstance(
             },
             required: ["key", "v1", "v2"],
           },
+        },
+        {
+          name: "munin_delete_memory",
+          description: "Permanently delete a memory by key or id from the current Munin Context Core. This action is destructive and cannot be undone — the memory and all its version history are removed. Use with caution. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              projectId: { type: "string", description: "Optional. Defaults to active project." },
+              key: { type: "string", description: "Memory key (provide this OR id, not both)" },
+              id: { type: "string", description: "Memory ID (provide this OR key, not both)" }
+            },
+            oneOf: [
+              { required: ["key"] },
+              { required: ["id"] }
+            ]
+          }
         },
         {
           name: "munin_acknowledge_setup",
@@ -291,13 +314,25 @@ export function createMcpServerInstance(
           break;
         }
         case "munin_versions":
+          if (!args.key && !args.id) {
+            throw new Error("munin_versions requires either 'key' or 'id' to identify the target memory.");
+          }
           result = await client.invoke(projectId, "versions", { key: args.key, id: args.id });
           break;
         case "munin_rollback":
+          if (!args.key && !args.id) {
+            throw new Error("munin_rollback requires either 'key' or 'id' to identify the target memory.");
+          }
+          if (typeof args.version !== "number") {
+            throw new Error("munin_rollback requires a numeric 'version' to roll back to.");
+          }
           result = await client.invoke(projectId, "rollback", { key: args.key, id: args.id, version: args.version });
           break;
-        case "munin_diff_memory":
-          result = await client.invoke(projectId, "diff", { key: args.key, v1: args.v1, v2: args.v2 });
+        case "munin_delete_memory":
+          if (!args.key && !args.id) {
+            throw new Error("munin_delete_memory requires either 'key' or 'id' to identify the target memory.");
+          }
+          result = await client.invoke(projectId, "delete", { key: args.key, id: args.id });
           break;
         case "munin_acknowledge_setup":
           result = await client.invoke(projectId, "acknowledge_setup", { version: args.version });

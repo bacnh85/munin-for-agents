@@ -10,6 +10,7 @@ export type MuninAction =
   | "encrypt"
   | "decrypt"
   | "diff"
+  | "delete"
   | "acknowledge_setup";
 
 export interface MuninActionEnvelope<TPayload = Record<string, unknown>> {
