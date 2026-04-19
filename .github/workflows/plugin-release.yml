@@ -4,13 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag muốn release (ví dụ: v1.0.0)'
+        description: 'Tag plugin muốn release (ví dụ: plugin-claude-v1.0.0)'
         required: true
-        default: 'v1.0.0'
+        default: 'plugin-claude-vX.Y.Z'
   push:
     tags:
-      # Tag format: munin-claude-v1.2.5 (matches plugin version)
-      - "munin-claude-v*"
+      # Tag format: plugin-claude-v1.2.5 (matches plugin version).
+      # NOTE: Distinct from `munin-claude-v*` (which triggers adapter release in release.yml)
+      - "plugin-claude-v*"
 
 jobs:
   release:
@@ -33,4 +34,4 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
-          npm publish /tmp/package.json --access public --tag latest
+          npm publish /tmp/munin-pkg --access public --tag latest
