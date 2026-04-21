@@ -13,7 +13,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@kalera/munin-mcp-server",
-      "version": "1.4.2",
+      "version": "1.4.3",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"
